@@ -1,17 +1,18 @@
 import { useState } from 'react';
 import type { NetworkEdge, NetworkNode, RiskLevel } from '../../types';
+import { Card } from '../ui/Card';
 
 const NODE_FILL: Record<RiskLevel, string> = {
   low: '#10B981',
-  medium: '#F59E0B',
+  medium: '#FBBF24',
   high: '#F97316',
-  critical: '#E11D48',
+  critical: '#F43F5E',
 };
 
 function edgeStrokeColor(score: number): string {
-  if (score >= 75) return '#E11D48';
+  if (score >= 75) return '#F43F5E';
   if (score >= 50) return '#F97316';
-  if (score >= 25) return '#F59E0B';
+  if (score >= 25) return '#FBBF24';
   return '#10B981';
 }
 
@@ -33,9 +34,11 @@ export function NetworkGraphSvg({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const nodeMap = new Map(nodes.map((n) => [n.id, n]));
   const hasHighlight = highlightedAccounts.size > 0;
+  const cx = width / 2;
+  const cy = height / 2;
 
   return (
-    <div className="relative rounded-xl border border-slate-800 bg-[#080C13] overflow-hidden">
+    <Card padding="none" className="relative overflow-hidden bg-[#090b10]">
       <svg
         data-testid="aml-network-svg"
         viewBox={`0 0 ${width} ${height}`}
@@ -44,29 +47,44 @@ export function NetworkGraphSvg({
         aria-label="Force-directed AML transaction network of top 80 high-risk accounts"
       >
         <defs>
+          <filter id="blip-glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="2.4" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
           <marker
             id="arrow-default"
             viewBox="0 0 10 10"
             refX="14"
             refY="5"
-            markerWidth="5"
-            markerHeight="5"
+            markerWidth="4.5"
+            markerHeight="4.5"
             orient="auto"
           >
-            <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748B" />
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
           </marker>
           <marker
             id="arrow-amber"
             viewBox="0 0 10 10"
             refX="14"
             refY="5"
-            markerWidth="6"
-            markerHeight="6"
+            markerWidth="5.5"
+            markerHeight="5.5"
             orient="auto"
           >
-            <path d="M 0 1 L 10 5 L 0 9 z" fill="#F59E0B" />
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#FBBF24" />
           </marker>
         </defs>
+
+        <g stroke="#1e2530" strokeWidth="0.8" fill="none" opacity="0.65">
+          <circle cx={cx} cy={cy} r={Math.min(width, height) * 0.18} strokeDasharray="3 3" />
+          <circle cx={cx} cy={cy} r={Math.min(width, height) * 0.34} strokeDasharray="3 3" />
+          <circle cx={cx} cy={cy} r={Math.min(width, height) * 0.48} />
+          <line x1={0} y1={cy} x2={width} y2={cy} strokeDasharray="2 4" />
+          <line x1={cx} y1={0} x2={cx} y2={height} strokeDasharray="2 4" />
+        </g>
 
         {edges.map((edge) => {
           const s = nodeMap.get(edge.source);
@@ -84,9 +102,9 @@ export function NetworkGraphSvg({
               y1={s.y}
               x2={t.x}
               y2={t.y}
-              stroke={edge.isCircular ? '#F59E0B' : edgeStrokeColor(edge.maxRiskScore)}
-              strokeWidth={edge.isCircular || isMatch ? 2.4 : 1.0}
-              strokeOpacity={dimmed ? 0.1 : edge.isCircular || isMatch ? 0.95 : 0.28}
+              stroke={edge.isCircular ? '#FBBF24' : edgeStrokeColor(edge.maxRiskScore)}
+              strokeWidth={edge.isCircular || isMatch ? 1.8 : 0.75}
+              strokeOpacity={dimmed ? 0.08 : edge.isCircular || isMatch ? 0.92 : 0.28}
               markerEnd={edge.isCircular ? 'url(#arrow-amber)' : 'url(#arrow-default)'}
               className={edge.isCircular ? 'animate-flow-pulse' : undefined}
             />
@@ -94,10 +112,12 @@ export function NetworkGraphSvg({
         })}
 
         {nodes.map((node) => {
-          const r = Math.max(5.5, Math.min(16, 4.5 + Math.log10(node.volume) * 1.9));
+          const r = Math.max(4.5, Math.min(13, 4 + Math.log10(node.volume) * 1.6));
           const isHighlighted = highlightedAccounts.has(node.accountId);
           const isHovered = hoveredId === node.accountId;
           const dimmed = hasHighlight && !isHighlighted;
+          const fill = NODE_FILL[node.riskLevel];
+          const hot = node.riskLevel === 'critical' || node.riskLevel === 'high' || isHighlighted;
 
           return (
             <g
@@ -107,29 +127,25 @@ export function NetworkGraphSvg({
               onMouseLeave={() => setHoveredId(null)}
               onClick={() => onSelectAccount(node.accountId)}
               className="cursor-pointer"
-              opacity={dimmed ? 0.25 : 1}
+              opacity={dimmed ? 0.22 : 1}
+              filter={hot ? 'url(#blip-glow)' : undefined}
             >
-              {isHighlighted && (
-                <circle
-                  r={r + 5}
-                  fill="none"
-                  stroke="#F59E0B"
-                  strokeWidth="1.5"
-                  strokeDasharray="3 2"
-                />
-              )}
               <circle
-                r={r}
-                fill={NODE_FILL[node.riskLevel]}
-                stroke="#0B0F17"
-                strokeWidth="1.5"
+                r={r + 3.5}
+                fill="none"
+                stroke={isHighlighted ? '#FBBF24' : fill}
+                strokeOpacity={isHighlighted ? 0.9 : 0.35}
+                strokeWidth={isHighlighted ? 1.2 : 0.7}
+                strokeDasharray={isHighlighted ? '2 2' : undefined}
               />
+              <circle r={r} fill="#090b10" stroke={fill} strokeWidth="1.5" />
+              <circle r={Math.max(2, r * 0.45)} fill={fill} />
               {(isHovered || isHighlighted || node.roleFlag !== 'none') && (
                 <text
                   y={-(r + 7)}
                   textAnchor="middle"
-                  fill="#F8FAFC"
-                  fontSize="10"
+                  fill="#f8fafc"
+                  fontSize="9.5"
                   fontFamily="JetBrains Mono, monospace"
                 >
                   {node.accountId}
@@ -140,20 +156,20 @@ export function NetworkGraphSvg({
         })}
       </svg>
 
-      <div className="px-4 py-2.5 border-t border-slate-800 bg-slate-900/70 flex flex-wrap items-center justify-between gap-3 text-[11px] text-slate-400">
-        <div className="flex flex-wrap items-center gap-4">
+      <div className="px-3 py-2 border-t border-[#1e2530] bg-[#11151c] flex flex-wrap items-center justify-between gap-3 text-[10px] font-mono uppercase tracking-wider text-slate-400">
+        <div className="flex flex-wrap items-center gap-3.5">
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-600" /> Critical
+            <span className="w-2 h-2 rounded-full bg-rose-500" /> CRIT TARGET
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-orange-500" /> High
+            <span className="w-2 h-2 rounded-full bg-orange-500" /> HIGH TARGET
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Circular Flow Edge
+            <span className="w-2 h-2 rounded-full bg-amber-400" /> CYCLE VECTOR
           </span>
         </div>
-        <span>Click any node to inspect account transactions</span>
+        <span>CLICK BLIP TO QUERY ACCOUNT LEDGER</span>
       </div>
-    </div>
+    </Card>
   );
 }

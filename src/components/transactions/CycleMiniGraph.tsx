@@ -16,13 +16,13 @@ export function CycleMiniGraph({ cyclePath }: { cyclePath: string[] }) {
   });
 
   return (
-    <div className="rounded-lg border border-amber-500/30 bg-amber-950/15 p-3">
-      <p className="text-xs font-semibold text-amber-300 mb-2">
-        Circular Layering Ring Detected
+    <div className="rounded border border-amber-400/35 bg-[#090b10] p-2.5">
+      <p className="text-[11px] font-mono uppercase tracking-wider font-semibold text-amber-400 mb-1.5">
+        CIRCULAR LAYERING RING DETECTED
       </p>
       <svg
         viewBox="0 0 260 140"
-        className="w-full h-32"
+        className="w-full h-28"
         role="img"
         aria-label={`Circular flow graph: ${cyclePath.join(' to ')}`}
       >
@@ -36,7 +36,7 @@ export function CycleMiniGraph({ cyclePath }: { cyclePath: string[] }) {
             markerHeight="5"
             orient="auto-start-reverse"
           >
-            <path d="M 0 1 L 10 5 L 0 9 z" fill="#F59E0B" />
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#FBBF24" />
           </marker>
         </defs>
         {coords.map((from, i) => {
@@ -53,8 +53,8 @@ export function CycleMiniGraph({ cyclePath }: { cyclePath: string[] }) {
               y1={from.y}
               x2={x2}
               y2={y2}
-              stroke="#F59E0B"
-              strokeWidth="2"
+              stroke="#FBBF24"
+              strokeWidth="1.5"
               markerEnd="url(#cycle-arrow)"
               className="animate-flow-pulse"
             />
@@ -62,20 +62,14 @@ export function CycleMiniGraph({ cyclePath }: { cyclePath: string[] }) {
         })}
         {coords.map((node) => (
           <g key={node.id}>
-            <circle
-              cx={node.x}
-              cy={node.y}
-              r="11"
-              fill="#0F172A"
-              stroke="#F59E0B"
-              strokeWidth="2"
-            />
+            <circle cx={node.x} cy={node.y} r="12" fill="none" stroke="#FBBF24" strokeOpacity="0.35" strokeWidth="0.8" />
+            <circle cx={node.x} cy={node.y} r="6.5" fill="#090b10" stroke="#FBBF24" strokeWidth="1.5" />
             <text
               x={node.x}
-              y={node.y + 22}
+              y={node.y + 21}
               textAnchor="middle"
               fill="#FDE68A"
-              fontSize="10"
+              fontSize="9"
               fontFamily="JetBrains Mono, monospace"
             >
               {node.id}

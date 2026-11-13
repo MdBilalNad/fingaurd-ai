@@ -5,20 +5,20 @@
   --font-display: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --color-canvas: #0B0F17;
-  --color-surface: #111827;
-  --color-surface-elevated: #172033;
+  --color-canvas: #090b10;
+  --color-surface: #11151c;
+  --color-border-hairline: #1e2530;
   --color-risk-low: #10B981;
-  --color-risk-medium: #F59E0B;
+  --color-risk-medium: #FBBF24;
   --color-risk-high: #F97316;
-  --color-risk-critical: #E11D48;
+  --color-risk-critical: #F43F5E;
 }
 
 @layer base {
   html {
     font-family: var(--font-sans);
-    background-color: #0B0F17;
-    color: #F1F5F9;
+    background-color: #090b10;
+    color: #e2e8f0;
   }
 
   h1, h2, h3, h4 {
@@ -30,14 +30,35 @@
   font-variant-numeric: tabular-nums;
 }
 
+.bg-blueprint-grid {
+  background-color: #090b10;
+  background-image:
+    linear-gradient(to right, rgba(30, 37, 48, 0.32) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 37, 48, 0.32) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+@keyframes simGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.35), 0 0 10px rgba(16, 185, 129, 0.22);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.6), 0 0 16px rgba(16, 185, 129, 0.38);
+  }
+}
+
+.animate-sim-glow {
+  animation: simGlow 2.2s ease-in-out infinite;
+}
+
 @keyframes flowPulse {
   0%, 100% {
     stroke-opacity: 0.95;
-    stroke-width: 2.8;
+    stroke-width: 2.1;
   }
   50% {
-    stroke-opacity: 0.4;
-    stroke-width: 1.8;
+    stroke-opacity: 0.45;
+    stroke-width: 1.3;
   }
 }
 
@@ -46,7 +67,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-flow-pulse {
+  .animate-flow-pulse,
+  .animate-sim-glow {
     animation: none;
   }
 }

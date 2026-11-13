@@ -20,40 +20,40 @@ export function ToastContainer() {
   return (
     <div
       aria-live="polite"
-      className="fixed bottom-4 right-4 z-50 flex flex-col gap-2.5 w-[calc(100vw-2rem)] max-w-sm"
+      className="fixed bottom-3 right-3 z-50 flex flex-col gap-2 w-[calc(100vw-1.5rem)] max-w-sm"
     >
       {toasts.map((toast) => {
         const isCritical = toast.severity === 'critical';
         const isHigh = toast.severity === 'high';
         const borderCls = isCritical
-          ? 'border-rose-500/50'
+          ? 'border-l-2 border-l-rose-500 border-[#1e2530]'
           : isHigh
-            ? 'border-orange-500/50'
+            ? 'border-l-2 border-l-amber-400 border-[#1e2530]'
             : toast.severity === 'low'
-              ? 'border-emerald-500/40'
-              : 'border-slate-700';
+              ? 'border-l-2 border-l-emerald-500 border-[#1e2530]'
+              : 'border-l-2 border-l-slate-500 border-[#1e2530]';
 
         const Icon = isCritical || isHigh ? AlertOctagon : toast.severity === 'low' ? CheckCircle2 : Info;
         const iconCls = isCritical
-          ? 'text-rose-400'
+          ? 'text-rose-500'
           : isHigh
-            ? 'text-orange-400'
+            ? 'text-amber-400'
             : toast.severity === 'low'
-              ? 'text-emerald-400'
-              : 'text-slate-300';
+              ? 'text-emerald-500'
+              : 'text-slate-400';
 
         return (
           <div
             key={toast.id}
             role="status"
-            className={`rounded-xl border ${borderCls} bg-slate-900/95 backdrop-blur-md p-3.5 shadow-xl flex items-start gap-3`}
+            className={`rounded border ${borderCls} bg-[#090b10] p-3 flex items-start gap-2.5`}
           >
             <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${iconCls}`} aria-hidden="true" />
             <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-slate-100 truncate">
+              <p className="text-xs font-mono font-semibold text-slate-100 truncate">
                 {toast.title}
               </p>
-              <p className="text-xs text-slate-400 mt-0.5 leading-snug">
+              <p className="text-[11px] text-slate-400 mt-0.5 leading-snug">
                 {toast.description}
               </p>
               {toast.txnId && (
@@ -67,9 +67,9 @@ export function ToastContainer() {
                     });
                     dispatch({ type: 'DISMISS_TOAST', id: toast.id });
                   }}
-                  className="mt-2 text-xs font-medium text-emerald-400 hover:text-emerald-300 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded"
+                  className="mt-1.5 text-[11px] font-mono text-emerald-400 hover:text-emerald-300 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 rounded-sm"
                 >
-                  View transaction
+                  Inspect {toast.txnId}
                 </button>
               )}
             </div>
@@ -77,7 +77,7 @@ export function ToastContainer() {
               type="button"
               aria-label="Dismiss notification"
               onClick={() => dispatch({ type: 'DISMISS_TOAST', id: toast.id })}
-              className="p-1 text-slate-400 hover:text-slate-200 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+              className="p-0.5 text-slate-500 hover:text-slate-200 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
             >
               <X className="w-3.5 h-3.5" aria-hidden="true" />
             </button>

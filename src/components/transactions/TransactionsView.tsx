@@ -16,9 +16,9 @@ export function TransactionsView() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <TransactionFilters />
-      <div className="grid grid-cols-1 xl:grid-cols-[1.55fr_1fr] gap-5 items-start">
+      <div className="grid grid-cols-1 xl:grid-cols-[1.55fr_1fr] gap-3 items-start">
         <div className="min-w-0">
           <TransactionTable
             rows={pageRows}

@@ -5,9 +5,9 @@ import { EmptyState } from '../ui/EmptyState';
 import { AlertCard } from './AlertCard';
 
 const STATUS_TABS: { id: AlertStatus; label: string }[] = [
-  { id: 'open', label: 'Open' },
-  { id: 'acknowledged', label: 'Acknowledged' },
-  { id: 'dismissed', label: 'Dismissed' },
+  { id: 'open', label: 'OPEN' },
+  { id: 'acknowledged', label: 'ACKNOWLEDGED' },
+  { id: 'dismissed', label: 'DISMISSED' },
 ];
 
 export function AlertsView() {
@@ -30,12 +30,12 @@ export function AlertsView() {
   );
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-2.5">
         <div
           role="tablist"
           aria-label="Alert status filter"
-          className="inline-flex items-center gap-1 p-1 rounded-xl bg-slate-900 border border-slate-800"
+          className="inline-flex items-center gap-0.5 p-0.5 rounded bg-[#090b10] border border-[#1e2530]"
         >
           {STATUS_TABS.map((tab) => {
             const active = alertStatusTab === tab.id;
@@ -46,20 +46,20 @@ export function AlertsView() {
                 role="tab"
                 aria-selected={active}
                 onClick={() => dispatch({ type: 'SET_ALERT_TAB', tab: tab.id })}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
+                className={`px-3 py-1 rounded-sm text-[11px] font-mono transition-colors whitespace-nowrap focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 ${
                   active
-                    ? 'bg-slate-800 text-slate-100'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-[#11151c] text-emerald-400 border border-[#1e2530]'
+                    : 'text-slate-400 hover:text-slate-200 border border-transparent'
                 }`}
               >
-                {tab.label} ({counts[tab.id]})
+                {tab.label} [{counts[tab.id]}]
               </button>
             );
           })}
         </div>
 
-        <p className="text-xs text-slate-400">
-          Showing {visibleAlerts.length} {alertStatusTab} investigation items
+        <p className="text-[11px] font-mono uppercase text-slate-400 tabular-nums">
+          {visibleAlerts.length} {alertStatusTab} items
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export function AlertsView() {
         <EmptyState
           title={`No ${alertStatusTab} alerts in queue`}
           description="Alerts acknowledged or dismissed by analysts are tracked across status tabs."
-          actionLabel={alertStatusTab !== 'open' ? 'View Open Alerts' : undefined}
+          actionLabel={alertStatusTab !== 'open' ? 'VIEW OPEN ALERTS' : undefined}
           onAction={
             alertStatusTab !== 'open'
               ? () => dispatch({ type: 'SET_ALERT_TAB', tab: 'open' })
@@ -75,7 +75,7 @@ export function AlertsView() {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
           {visibleAlerts.slice(0, 40).map((alert) => (
             <AlertCard key={alert.alertId} alert={alert} />
           ))}

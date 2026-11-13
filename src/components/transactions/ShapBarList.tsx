@@ -1,22 +1,27 @@
 import type { ShapReason } from '../../types';
 
-export function ShapBarList({ reasons }: { reasons: ShapReason[] }) {
-  const maxAbs = Math.max(
-    0.15,
-    ...reasons.map((r) => Math.abs(r.contribution)),
-  );
+const FEATURE_CODE_MAP: Record<string, string> = {
+  'Transaction Amount': 'AMOUNT',
+  'Device Fingerprint': 'DEVICE',
+  'Time-of-Day Window': 'TIME',
+  'Cross-Border IP': 'GEO',
+  'Counterparty Novelty': 'COUNTERPARTY',
+  '24h Velocity': 'VELOCITY',
+  'Sender Graph Topology': 'SENDER_GRAPH',
+  'Receiver Graph Topology': 'RECV_GRAPH',
+};
 
+function toTerminalTag(feature: string): string {
+  return FEATURE_CODE_MAP[feature] ?? feature.toUpperCase().replace(/[^A-Z0-9]+/g, '_');
+}
+
+export function ShapBarList({ reasons }: { reasons: ShapReason[] }) {
   return (
-    <div className="space-y-3">
+    <div className="rounded border border-[#1e2530] bg-[#090b10] p-2.5 font-mono text-[11px] space-y-1.5">
       {reasons.map((reason, idx) => {
         const isPositive = reason.contribution >= 0;
-        const pct = Math.min(100, Math.round((Math.abs(reason.contribution) / maxAbs) * 100));
-        const barColor =
-          reason.contribution >= 0.25
-            ? 'bg-rose-500'
-            : isPositive
-              ? 'bg-amber-500'
-              : 'bg-emerald-500';
+        const signStr = `${isPositive ? '+' : ''}${reason.contribution.toFixed(2)}`;
+        const tag = toTerminalTag(reason.feature);
         const valColor =
           reason.contribution >= 0.25
             ? 'text-rose-400'
@@ -25,23 +30,14 @@ export function ShapBarList({ reasons }: { reasons: ShapReason[] }) {
               : 'text-emerald-400';
 
         return (
-          <div key={`${reason.feature}-${idx}`} className="space-y-1">
-            <div className="flex items-center justify-between gap-2 text-xs">
-              <span className="font-medium text-slate-200">{reason.feature}</span>
-              <span className={`font-mono tabular-nums font-semibold ${valColor}`}>
-                {isPositive ? '+' : ''}
-                {reason.contribution.toFixed(2)}
-              </span>
-            </div>
-            <div className="h-2 w-full rounded-full bg-slate-950 overflow-hidden border border-slate-800">
-              <div
-                className={`h-full rounded-full ${barColor}`}
-                style={{ width: `${pct}%` }}
-              />
-            </div>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              {reason.humanText}
-            </p>
+          <div
+            key={`${reason.feature}-${idx}`}
+            className="leading-relaxed border-b border-[#1e2530]/60 last:border-b-0 pb-1.5 last:pb-0"
+          >
+            <span className={`font-semibold tabular-nums ${valColor}`}>[{signStr}]</span>{' '}
+            <span className="text-slate-500">❯</span>{' '}
+            <span className="font-semibold text-slate-200">{tag}:</span>{' '}
+            <span className="text-slate-400">{reason.humanText}</span>
           </div>
         );
       })}

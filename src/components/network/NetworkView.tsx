@@ -27,7 +27,7 @@ export function NetworkView() {
   };
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-3 items-start">
       <div className="xl:col-span-8">
         <NetworkGraphSvg
           nodes={nodes}
