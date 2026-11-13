@@ -1,0 +1,6 @@
+{
+  "name": "FinGuard AI",
+  "description": "Intelligent financial security command center with client-side ML, AML rules, graph analytics, and SHAP-style Explainable AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
